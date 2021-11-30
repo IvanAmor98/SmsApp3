@@ -8,7 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 
-public class SmsReciever extends BroadcastReceiver {
+public class SmsReceiver extends BroadcastReceiver {
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
