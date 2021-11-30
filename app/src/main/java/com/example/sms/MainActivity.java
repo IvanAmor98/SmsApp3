@@ -24,10 +24,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Check version
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // If Android version M or newer:
+            // Check if already has permissions
             if (checkSelfPermission(Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] {Manifest.permission.SEND_SMS}, 1);
+                // If not, asks for permissions
+                requestPermissions(new String[] {
+                        Manifest.permission.SEND_SMS,
+                        Manifest.permission.RECEIVE_SMS,
+                        Manifest.permission.BROADCAST_SMS
+                }, 1);
             }
+        }
+
+        // Check if intent has sms received
+        if (getIntent().getStringExtra("Message") != null) {
+            // If has sms show content
+            Toast.makeText(MainActivity.this, "SMS recibido", Toast.LENGTH_SHORT).show();
+            ((TextView)findViewById(R.id.smsOutput)).setText(getIntent().getStringExtra("Message"));
         }
 
     }
@@ -35,10 +50,14 @@ public class MainActivity extends AppCompatActivity {
     public void sendSms(View v) {
         SmsManager manager = SmsManager.getDefault();
         StringBuilder number = new StringBuilder();
+
+        // Build sms address
         number.append("+");
         number.append(((TextView)findViewById(R.id.countryInput)).getText());
         number.append(((TextView)findViewById(R.id.numberInput)).getText());
+
         try {
+            // Try to send sms to default SMSC
             manager.sendTextMessage(number.toString(), null, ((TextView)findViewById(R.id.contentInput)).getText().toString(), null, null);
             Toast.makeText(MainActivity.this, "SMS enviado", Toast.LENGTH_SHORT).show();
         } catch (Exception ex) {
